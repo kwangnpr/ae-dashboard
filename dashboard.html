@@ -2,934 +2,579 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Kwang Team — AE Sales Dashboard</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AE Sales Dashboard 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
 :root{
-  --navy:#0B1E3D;
-  --navy-deep:#071529;
-  --green:#1F8A5F;
-  --green-soft:#E4F3EC;
-  --amber:#D97706;
-  --amber-soft:#FBEEDC;
-  --red:#C0392B;
-  --red-soft:#FAE6E3;
-  --cream:#F7F5F0;
-  --ink:#1C2230;
-  --ink-soft:#5B6478;
-  --line:#E4E1D8;
-  --white:#FFFFFF;
-  --shadow: 0 1px 2px rgba(11,30,61,0.04), 0 8px 24px rgba(11,30,61,0.06);
+  --navy:#0B1E3D;--navy2:#172B4D;
+  --green:#1B7A4F;--green-bg:#E5F3EC;
+  --amber:#B87000;--amber-bg:#FEF0D3;
+  --red:#B03030;--red-bg:#FAEBEB;
+  --blue:#1A58A8;--blue-bg:#E7EFF9;
+  --ink:#1C2130;--ink2:#4D5876;--ink3:#8A94AB;
+  --cream:#F4F2EE;--white:#FFF;--line:#E3DFD8;
+  --sh:0 1px 3px rgba(11,30,61,.05),0 6px 18px rgba(11,30,61,.08);
 }
-*{box-sizing:border-box;}
-html,body{margin:0;padding:0;}
-body{
-  font-family:'Inter',sans-serif;
-  background:var(--cream);
-  color:var(--ink);
-  -webkit-font-smoothing:antialiased;
-}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--ink);-webkit-font-smoothing:antialiased;}
 .app{display:flex;min-height:100vh;}
 
-/* ===== Sidebar ===== */
-.sidebar{
-  width:248px;
-  flex-shrink:0;
-  background:var(--navy);
-  color:#fff;
-  padding:28px 18px;
-  display:flex;
-  flex-direction:column;
-  gap:28px;
-}
-.brand{padding:0 6px;}
-.brand .eyebrow{
-  font-size:11px;letter-spacing:0.12em;text-transform:uppercase;
-  color:#7C93BD;font-weight:600;margin-bottom:4px;
-}
-.brand h1{
-  font-family:'Space Grotesk',sans-serif;
-  font-size:21px;font-weight:600;margin:0;line-height:1.25;
-}
-.nav{display:flex;flex-direction:column;gap:4px;}
-.nav-item{
-  display:flex;align-items:center;gap:10px;
-  padding:11px 12px;border-radius:10px;
-  font-size:14px;font-weight:500;color:#B9C5DC;
-  cursor:pointer;transition:background .15s, color .15s;
-  user-select:none;
-}
-.nav-item:hover{background:rgba(255,255,255,0.06);color:#fff;}
-.nav-item.active{background:rgba(255,255,255,0.12);color:#fff;}
-.nav-item .dot{width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.5;flex-shrink:0;}
-.nav-item.active .dot{opacity:1;background:#5DD9A4;}
+/* ── SIDEBAR ── */
+.sb{width:236px;flex-shrink:0;background:var(--navy);display:flex;flex-direction:column;padding:22px 14px;}
+.brand .eye{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#6880B0;margin-bottom:4px;}
+.brand h1{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:600;color:#fff;line-height:1.3;}
+.nav{display:flex;flex-direction:column;gap:3px;margin-top:26px;}
+.ni{display:flex;align-items:center;gap:9px;padding:10px 11px;border-radius:9px;font-size:13.5px;font-weight:500;color:#8AA0CC;cursor:pointer;transition:.15s;user-select:none;}
+.ni:hover{background:rgba(255,255,255,.06);color:#fff;}
+.ni.on{background:rgba(255,255,255,.12);color:#fff;}
+.ni svg{width:15px;height:15px;opacity:.7;flex-shrink:0;}
+.ni.on svg{opacity:1;}
+.sb-foot{margin-top:auto;font-size:11.5px;color:#60789A;line-height:1.9;}
+.live{display:flex;align-items:center;gap:5px;}
+.dot{width:6px;height:6px;border-radius:50%;background:#42D49A;animation:pulse 2s infinite;}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(66,212,154,.5);}70%{box-shadow:0 0 0 6px rgba(66,212,154,0);}100%{box-shadow:0 0 0 0 rgba(66,212,154,0);}}
 
-.sidebar-foot{
-  margin-top:auto;
-  padding:14px 12px;
-  background:rgba(255,255,255,0.05);
-  border-radius:12px;
-  font-size:12px;
-  color:#8FA0C2;
-  line-height:1.6;
-}
-.sidebar-foot .live-dot{
-  display:inline-block;width:7px;height:7px;border-radius:50%;
-  background:#5DD9A4;margin-right:6px;
-  box-shadow:0 0 0 0 rgba(93,217,164,.6);
-  animation:pulse 2s infinite;
-}
-@keyframes pulse{
-  0%{box-shadow:0 0 0 0 rgba(93,217,164,.5);}
-  70%{box-shadow:0 0 0 6px rgba(93,217,164,0);}
-  100%{box-shadow:0 0 0 0 rgba(93,217,164,0);}
-}
-
-/* ===== Main ===== */
-.main{flex:1;padding:32px 40px;max-width:1280px;}
-.topbar{
-  display:flex;justify-content:space-between;align-items:flex-start;
-  margin-bottom:28px;flex-wrap:wrap;gap:16px;
-}
-.topbar h2{
-  font-family:'Space Grotesk',sans-serif;
-  font-size:26px;margin:0 0 4px 0;font-weight:600;
-}
-.topbar p{margin:0;color:var(--ink-soft);font-size:14px;}
-.refresh-info{
-  display:flex;align-items:center;gap:10px;
-  font-size:13px;color:var(--ink-soft);
-}
-.btn{
-  border:1px solid var(--line);background:#fff;
-  padding:8px 14px;border-radius:8px;font-size:13px;font-weight:600;
-  cursor:pointer;color:var(--ink);transition:border-color .15s;
-  display:inline-flex;align-items:center;gap:6px;
-}
+/* ── MAIN ── */
+.main{flex:1;padding:26px 34px;overflow:auto;}
+.topbar{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:22px;gap:16px;flex-wrap:wrap;}
+.topbar h2{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:600;}
+.topbar p{font-size:13px;color:var(--ink2);margin-top:3px;}
+.btn{border:1px solid var(--line);background:var(--white);padding:8px 14px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;color:var(--ink);display:inline-flex;align-items:center;gap:5px;}
 .btn:hover{border-color:var(--navy);}
+.btn.pri{background:var(--navy);color:#fff;border-color:var(--navy);}
 
-.view{display:none;}
-.view.active{display:block;}
+/* ── VIEWS ── */
+.view{display:none;}.view.on{display:block;}
 
-/* ===== KPI cards ===== */
-.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px;}
-.kpi-card{
-  background:#fff;border-radius:14px;padding:20px;
-  box-shadow:var(--shadow);border:1px solid var(--line);
-}
-.kpi-card .label{font-size:12px;color:var(--ink-soft);font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px;}
-.kpi-card .value{
-  font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:600;
-  font-variant-numeric:tabular-nums;line-height:1.1;
-}
-.kpi-card .sub{font-size:12px;color:var(--ink-soft);margin-top:6px;}
-.kpi-card .sub.pos{color:var(--green);}
-.kpi-card .sub.neg{color:var(--red);}
+/* ── KPI ── */
+.kgrid{display:grid;gap:13px;margin-bottom:20px;}
+.k4{grid-template-columns:repeat(4,1fr);}
+.k3{grid-template-columns:repeat(3,1fr);}
+.kc{background:var(--white);border-radius:13px;padding:17px 19px;box-shadow:var(--sh);border:1px solid var(--line);}
+.kc .lbl{font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink2);font-weight:600;margin-bottom:6px;}
+.kc .val{font-family:'Space Grotesk',sans-serif;font-size:23px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1.1;}
+.kc .sub{font-size:12px;color:var(--ink2);margin-top:5px;}
+.kc .sub.g{color:var(--green);}
+.kc .sub.r{color:var(--red);}
+.kc .sub.a{color:var(--amber);}
 
-/* ===== Card / Panel ===== */
-.panel{
-  background:#fff;border-radius:14px;padding:24px;
-  box-shadow:var(--shadow);border:1px solid var(--line);
-  margin-bottom:24px;
-}
-.panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:10px;}
-.panel-head h3{font-family:'Space Grotesk',sans-serif;font-size:16px;margin:0;font-weight:600;}
-.panel-head .meta{font-size:12px;color:var(--ink-soft);}
+/* ── PANEL ── */
+.panel{background:var(--white);border-radius:13px;padding:20px 22px;box-shadow:var(--sh);border:1px solid var(--line);margin-bottom:18px;}
+.ph{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;flex-wrap:wrap;gap:8px;}
+.ph h3{font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:600;}
+.ph .meta{font-size:12px;color:var(--ink2);}
+.grid2{display:grid;grid-template-columns:1.35fr 1fr;gap:18px;}
+.cw{position:relative;}
+.cw.h260{height:260px;}.cw.h300{height:300px;}.cw.h340{height:340px;}
 
-.cols-2{display:grid;grid-template-columns:1.3fr 1fr;gap:24px;}
-
-/* ===== Table ===== */
-table{width:100%;border-collapse:collapse;font-size:13.5px;}
-th{
-  text-align:left;font-size:11.5px;text-transform:uppercase;letter-spacing:.04em;
-  color:var(--ink-soft);font-weight:600;padding:10px 12px;border-bottom:2px solid var(--line);
-  font-family:'Inter',sans-serif;
-}
-td{padding:11px 12px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums;}
+/* ── TABLE ── */
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink2);font-weight:600;padding:9px 11px;border-bottom:2px solid var(--line);}
+td{padding:10px 11px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums;}
 tr:last-child td{border-bottom:none;}
-tr:hover td{background:#FAF9F5;}
-.num{text-align:right;}
-.name-cell{display:flex;align-items:center;gap:10px;font-weight:600;}
-.avatar{
-  width:28px;height:28px;border-radius:50%;
-  background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;
-  font-size:12px;font-weight:700;flex-shrink:0;
-}
+tr:hover td{background:#F8F7F3;}
+.nr{text-align:right;}
+.nc{display:flex;align-items:center;gap:8px;}
+.av{width:26px;height:26px;border-radius:50%;background:var(--navy2);color:#fff;font-size:10.5px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 
-/* ===== Progress timeline (signature element) ===== */
-.ytd-track{
-  position:relative;height:46px;margin:6px 0 4px 0;
-}
-.ytd-track .rail{
-  position:absolute;top:20px;left:0;right:0;height:6px;background:var(--line);border-radius:4px;
-}
-.ytd-track .fill{
-  position:absolute;top:20px;left:0;height:6px;background:linear-gradient(90deg,var(--navy),var(--green));border-radius:4px;
-  transition:width .6s ease;
-}
-.ytd-track .marker{
-  position:absolute;top:12px;width:22px;height:22px;border-radius:50%;
-  background:#fff;border:3px solid var(--navy);transform:translateX(-50%);
-  display:flex;align-items:center;justify-content:center;
-}
-.ytd-track .month-labels{
-  display:flex;justify-content:space-between;font-size:10.5px;color:var(--ink-soft);margin-top:2px;
-}
+/* ── PROGRESS ── */
+.pb{display:flex;align-items:center;gap:7px;min-width:110px;}
+.pb-rail{flex:1;height:5px;background:var(--line);border-radius:3px;overflow:hidden;}
+.pb-fill{height:100%;border-radius:3px;}
+.pb-fill.g{background:var(--green);}
+.pb-fill.a{background:var(--amber);}
+.pb-fill.r{background:var(--red);}
 
-/* ===== Badges ===== */
-.badge{
-  display:inline-flex;align-items:center;padding:3px 9px;border-radius:6px;
-  font-size:11.5px;font-weight:700;
-}
-.badge.good{background:var(--green-soft);color:var(--green);}
-.badge.warn{background:var(--amber-soft);color:var(--amber);}
-.badge.bad{background:var(--red-soft);color:var(--red);}
+/* ── BADGE ── */
+.badge{display:inline-flex;padding:2.5px 7px;border-radius:5px;font-size:11px;font-weight:700;}
+.badge.g{background:var(--green-bg);color:var(--green);}
+.badge.a{background:var(--amber-bg);color:var(--amber);}
+.badge.r{background:var(--red-bg);color:var(--red);}
+.badge.b{background:var(--blue-bg);color:var(--blue);}
 
-/* ===== Filters ===== */
-.filter-bar{display:flex;gap:10px;align-items:center;margin-bottom:20px;flex-wrap:wrap;}
-.filter-bar select, .filter-bar input{
-  border:1px solid var(--line);border-radius:8px;padding:9px 12px;font-size:13.5px;
-  font-family:'Inter',sans-serif;background:#fff;color:var(--ink);min-width:200px;
-}
-.filter-bar label{font-size:12px;color:var(--ink-soft);font-weight:600;}
+/* ── TAGS ── */
+.tn{background:var(--blue-bg);color:var(--blue);font-size:10px;font-weight:700;padding:2px 5px;border-radius:3px;margin-left:4px;}
+.tr{background:var(--green-bg);color:var(--green);font-size:10px;font-weight:700;padding:2px 5px;border-radius:3px;margin-left:4px;}
 
-/* ===== Loading / Error ===== */
-.loading-screen{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  height:80vh;gap:14px;color:var(--ink-soft);font-size:14px;
-}
-.spinner{
-  width:32px;height:32px;border-radius:50%;
-  border:3px solid var(--line);border-top-color:var(--navy);
-  animation:spin 0.8s linear infinite;
-}
+/* ── FILTER ── */
+.fbar{display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap;}
+.fbar select{border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:13px;background:var(--white);color:var(--ink);}
+
+/* ── SCREENS ── */
+.cs{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:14px;color:var(--ink2);}
+.spin{width:28px;height:28px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--navy);animation:spin .7s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
-.error-box{
-  background:var(--red-soft);color:var(--red);border-radius:10px;padding:16px 20px;font-size:13.5px;
-  border:1px solid rgba(192,57,43,0.25);margin-bottom:20px;line-height:1.6;
-}
-.empty-state{
-  text-align:center;padding:48px 20px;color:var(--ink-soft);font-size:13.5px;
-}
+.setup{max-width:500px;width:100%;padding:0 20px;text-align:left;}
+.setup h2{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:600;margin-bottom:6px;}
+.setup p{font-size:13px;color:var(--ink2);line-height:1.7;margin-bottom:16px;}
+input[type=text]{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-size:13.5px;margin-bottom:10px;font-family:'Inter',sans-serif;}
+.err{color:var(--red);font-size:12.5px;margin-top:8px;}
+.ebx{background:var(--red-bg);border:1px solid rgba(176,48,48,.2);border-radius:9px;padding:12px 15px;font-size:13px;color:var(--red);margin-bottom:16px;}
 
-.chart-wrap{position:relative;height:280px;}
-.chart-wrap.tall{height:340px;}
-
-.legend-row{display:flex;gap:18px;flex-wrap:wrap;margin-top:14px;font-size:12.5px;color:var(--ink-soft);}
-.legend-row .item{display:flex;align-items:center;gap:6px;}
-.legend-row .swatch{width:10px;height:10px;border-radius:3px;}
-
-@media (max-width:1024px){
-  .sidebar{display:none;}
-  .main{padding:20px;}
-  .kpi-grid{grid-template-columns:repeat(2,1fr);}
-  .cols-2{grid-template-columns:1fr;}
+@media(max-width:960px){
+  .sb{display:none;}.main{padding:16px;}
+  .kgrid{grid-template-columns:repeat(2,1fr)!important;}
+  .grid2{grid-template-columns:1fr;}
 }
 </style>
 </head>
 <body>
 
-<div id="setupScreen" class="loading-screen" style="display:none;flex-direction:column;max-width:560px;margin:0 auto;height:auto;padding-top:80px;text-align:left;">
-  <div style="font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:600;color:var(--ink);margin-bottom:8px;">ตั้งค่าการเชื่อมต่อข้อมูล</div>
-  <p style="color:var(--ink-soft);font-size:14px;line-height:1.7;margin-bottom:20px;">
-    ใส่ Web App URL ที่ได้จากการ Deploy Apps Script (ดูวิธีใน Code.gs ที่แนบมา)
-  </p>
-  <input id="apiUrlInput" type="text" placeholder="https://script.google.com/macros/s/XXXXX/exec"
-    style="width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:8px;font-size:13.5px;margin-bottom:12px;">
-  <button class="btn" style="background:var(--navy);color:#fff;border:none;padding:11px 18px;" onclick="saveApiUrl()">เชื่อมต่อ และโหลดข้อมูล</button>
-  <p id="setupError" style="color:var(--red);font-size:13px;margin-top:14px;"></p>
+<!-- Setup -->
+<div id="scSetup" class="cs" style="display:none;">
+  <div class="setup">
+    <h2>เชื่อมต่อข้อมูล</h2>
+    <p>วาง Web App URL ที่ได้จากการ Deploy Apps Script (Code.gs) ลงด้านล่าง แล้วกดเชื่อมต่อ</p>
+    <input type="text" id="apiIn" placeholder="https://script.google.com/macros/s/.../exec">
+    <button class="btn pri" onclick="saveUrl()" style="width:100%;justify-content:center;padding:11px;">เชื่อมต่อและโหลดข้อมูล</button>
+    <p class="err" id="setupErr"></p>
+  </div>
 </div>
 
-<div id="loadingScreen" class="loading-screen">
-  <div class="spinner"></div>
-  <div>กำลังโหลดข้อมูลจาก Google Sheet...</div>
+<!-- Loading -->
+<div id="scLoad" class="cs">
+  <div class="spin"></div>
+  <div>กำลังโหลดข้อมูล...</div>
 </div>
 
-<div id="app" class="app" style="display:none;">
+<!-- App -->
+<div id="scApp" class="app" style="display:none;">
 
-  <div class="sidebar">
+  <div class="sb">
     <div class="brand">
-      <div class="eyebrow">Kwang Team</div>
-      <h1>AE Sales<br>Dashboard</h1>
+      <div class="eye">AE Dashboard 2026</div>
+      <h1>Sales<br>Performance</h1>
     </div>
-    <div class="nav">
-      <div class="nav-item active" data-view="overview"><span class="dot"></span>ภาพรวมทีม &amp; รายคน</div>
-      <div class="nav-item" data-view="monthly"><span class="dot"></span>Performance รายเดือน</div>
-      <div class="nav-item" data-view="client"><span class="dot"></span>แยกตามลูกค้า</div>
-      <div class="nav-item" data-view="forecast"><span class="dot"></span>Forecast ทั้งปี</div>
-    </div>
-    <div class="sidebar-foot">
-      <div><span class="live-dot"></span>Live data</div>
-      <div id="lastUpdated" style="margin-top:4px;">—</div>
-      <div id="nextRefresh" style="margin-top:2px;opacity:.8;">—</div>
+    <nav class="nav">
+      <div class="ni on" data-v="ov">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        ภาพรวม AE
+      </div>
+      <div class="ni" data-v="bu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        แยกราย BU
+      </div>
+      <div class="ni" data-v="ind">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        รายบุคคล
+      </div>
+      <div class="ni" data-v="cl">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+        รายลูกค้า
+      </div>
+    </nav>
+    <div class="sb-foot">
+      <div class="live"><span class="dot"></span>Live — อัปเดตทุก 20 นาที</div>
+      <div id="tUpd"></div>
+      <div id="tNext"></div>
+      <a href="#" onclick="clearUrl()" style="color:#506088;font-size:11px;margin-top:6px;display:inline-block;">เปลี่ยน URL</a>
     </div>
   </div>
 
   <div class="main">
-
     <div class="topbar">
       <div>
-        <h2 id="pageTitle">ภาพรวมทีม &amp; รายคน</h2>
-        <p id="pageSub">ยอดขายที่ปิดสำเร็จ (Win) เท่านั้น — อัปเดตอัตโนมัติทุก 20 นาที</p>
+        <h2 id="pgTitle">ภาพรวม AE</h2>
+        <p id="pgSub">ยอดรวมทีมและรายบุคคล จาก Summary AE — Win เท่านั้น</p>
       </div>
-      <div class="refresh-info">
-        <button class="btn" onclick="loadAllData(true)">⟲ รีเฟรชตอนนี้</button>
-      </div>
+      <button class="btn" onclick="loadData(true)">⟲ รีเฟรช</button>
     </div>
+    <div id="errBnr"></div>
 
-    <div id="errorBanner"></div>
-
-    <!-- ========== VIEW 1: OVERVIEW ========== -->
-    <div class="view active" id="view-overview">
-      <div class="kpi-grid">
-        <div class="kpi-card">
-          <div class="label">ยอดขายรวมทีม (Win)</div>
-          <div class="value" id="kpiTotalBudget">—</div>
-          <div class="sub" id="kpiTotalBudgetSub">&nbsp;</div>
-        </div>
-        <div class="kpi-card">
-          <div class="label">GP รวม</div>
-          <div class="value" id="kpiTotalGP">—</div>
-          <div class="sub" id="kpiGpPct">&nbsp;</div>
-        </div>
-        <div class="kpi-card">
-          <div class="label">แคมเปญที่ Win</div>
-          <div class="value" id="kpiCount">—</div>
-          <div class="sub">รายการทั้งหมดที่ปิดสำเร็จ</div>
-        </div>
-        <div class="kpi-card">
-          <div class="label">จำนวน AE</div>
-          <div class="value" id="kpiAeCount">—</div>
-          <div class="sub">คนที่มียอดขายเข้า</div>
-        </div>
+    <!-- ── VIEW 1: OVERVIEW ── -->
+    <div class="view on" id="view-ov">
+      <div class="kgrid k4">
+        <div class="kc"><div class="lbl">Target ทั้งปี (ทีม)</div><div class="val" id="ov-tgt">—</div></div>
+        <div class="kc"><div class="lbl">Revenue สะสม</div><div class="val" id="ov-act">—</div><div class="sub" id="ov-pct">—</div></div>
+        <div class="kc"><div class="lbl">ขาดอีก</div><div class="val" id="ov-gap" style="color:var(--red);">—</div><div class="sub" id="ov-gsub">—</div></div>
+        <div class="kc"><div class="lbl">จำนวน AE</div><div class="val" id="ov-ae">—</div><div class="sub">คนใน Summary</div></div>
       </div>
 
-      <div class="panel">
-        <div class="panel-head">
-          <h3>Performance รายคน (เรียงตามยอดขาย)</h3>
-          <div class="meta">เฉพาะแคมเปญ Status = Win</div>
-        </div>
-        <table>
-          <thead><tr>
-            <th>AE</th><th class="num">ยอดขาย (Budget)</th><th class="num">GP</th><th class="num">% GP</th><th class="num">จำนวนแคมเปญ</th><th class="num">% ของยอดทีม</th>
-          </tr></thead>
-          <tbody id="aeTableBody"></tbody>
-        </table>
-        <div id="aeEmptyState" class="empty-state" style="display:none;">ยังไม่มีข้อมูลแคมเปญที่ Win</div>
-      </div>
-
-      <div class="panel">
-        <div class="panel-head"><h3>สัดส่วนยอดขายต่อคน</h3></div>
-        <div class="chart-wrap"><canvas id="aeShareChart"></canvas></div>
-      </div>
-    </div>
-
-    <!-- ========== VIEW 2: MONTHLY ========== -->
-    <div class="view" id="view-monthly">
-      <div class="filter-bar">
-        <label>เลือก AE</label>
-        <select id="monthlyAeFilter" onchange="renderMonthlyView()"></select>
-      </div>
-
-      <div class="panel">
-        <div class="panel-head">
-          <h3 id="monthlyChartTitle">เทรนด์ยอดขายรายเดือน</h3>
-          <div class="meta">เดือนนับจาก Campaign Start ของแคมเปญที่ Win</div>
-        </div>
-        <div class="chart-wrap tall"><canvas id="monthlyTrendChart"></canvas></div>
-      </div>
-
-      <div class="panel">
-        <div class="panel-head"><h3>ตารางสรุปรายเดือน</h3></div>
-        <table>
-          <thead><tr>
-            <th>เดือน</th><th class="num">ยอดขาย</th><th class="num">GP</th><th class="num">% GP</th><th class="num">จำนวนแคมเปญ</th>
-          </tr></thead>
-          <tbody id="monthlyTableBody"></tbody>
-        </table>
-      </div>
-    </div>
-
-    <!-- ========== VIEW 3: BY CLIENT ========== -->
-    <div class="view" id="view-client">
-      <div class="filter-bar">
-        <label>เลือกลูกค้า</label>
-        <select id="clientFilter" onchange="renderClientView()">
-          <option value="__all__">ลูกค้าทั้งหมด</option>
-        </select>
-      </div>
-
-      <div id="clientAllWrap">
+      <div class="grid2">
         <div class="panel">
-          <div class="panel-head"><h3>ยอดขายแยกตามลูกค้า</h3></div>
+          <div class="ph"><h3>Performance รายคน</h3><span class="meta">จาก Summary AE</span></div>
           <table>
-            <thead><tr>
-              <th>ลูกค้า</th><th class="num">ยอดขาย</th><th class="num">GP</th><th class="num">% GP</th><th class="num">จำนวนแคมเปญ</th><th>AE ที่ดูแล</th>
-            </tr></thead>
-            <tbody id="clientTableBody"></tbody>
+            <thead><tr><th>AE</th><th class="nr">Target</th><th class="nr">Revenue</th><th class="nr">Gap</th><th>% Achieved</th></tr></thead>
+            <tbody id="ov-tbl"></tbody>
           </table>
         </div>
-      </div>
-
-      <div id="clientDetailWrap" style="display:none;">
-        <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);">
-          <div class="kpi-card">
-            <div class="label">ยอดขายรวม</div>
-            <div class="value" id="clientDetailBudget">—</div>
-          </div>
-          <div class="kpi-card">
-            <div class="label">GP รวม</div>
-            <div class="value" id="clientDetailGP">—</div>
-          </div>
-          <div class="kpi-card">
-            <div class="label">แคมเปญที่ Win</div>
-            <div class="value" id="clientDetailCount">—</div>
-          </div>
-        </div>
         <div class="panel">
-          <div class="panel-head"><h3 id="clientDetailTitle">รายการแคมเปญ</h3></div>
-          <table>
-            <thead><tr>
-              <th>โครงการ</th><th>AE</th><th class="num">Budget</th><th class="num">GP</th><th>เดือน</th>
-            </tr></thead>
-            <tbody id="clientDetailTableBody"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- ========== VIEW 4: FORECAST ========== -->
-    <div class="view" id="view-forecast">
-      <div class="filter-bar">
-        <label>เลือกลูกค้า</label>
-        <select id="forecastClientFilter" onchange="renderForecastView()">
-          <option value="__all__">ลูกค้าทั้งหมด</option>
-        </select>
-        <label style="margin-left:8px;">Tier</label>
-        <select id="forecastTierFilter" onchange="renderForecastView()">
-          <option value="__all__">ทุก Tier</option>
-        </select>
-      </div>
-
-      <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);">
-        <div class="kpi-card">
-          <div class="label">Forecast ทั้งปี</div>
-          <div class="value" id="fcTotalForecast">—</div>
-        </div>
-        <div class="kpi-card">
-          <div class="label">Actual สะสม</div>
-          <div class="value" id="fcTotalActual">—</div>
-        </div>
-        <div class="kpi-card">
-          <div class="label">% Achieved</div>
-          <div class="value" id="fcTotalAchieved">—</div>
+          <div class="ph"><h3>สัดส่วนรายคน</h3></div>
+          <div class="cw h260"><canvas id="ov-pie"></canvas></div>
         </div>
       </div>
 
       <div class="panel">
-        <div class="panel-head"><h3>Forecast vs Actual ต่อลูกค้า</h3></div>
-        <table>
-          <thead><tr>
-            <th>Tier</th><th>ลูกค้า / BU</th><th>AE</th><th class="num">Forecast (ปี)</th><th class="num">Actual (สะสม)</th><th class="num">GP (สะสม)</th><th class="num">% Achieved</th>
-          </tr></thead>
-          <tbody id="forecastTableBody"></tbody>
-        </table>
-        <div id="forecastEmptyState" class="empty-state" style="display:none;">ยังไม่มีข้อมูล forecast ที่ตรงกับตัวกรอง</div>
-      </div>
-
-      <div class="panel" id="forecastDetailPanel" style="display:none;">
-        <div class="panel-head">
-          <h3 id="forecastDetailTitle">Forecast รายเดือน</h3>
-          <div class="meta">เส้นประ = ยังไม่กรอกข้อมูล (N/A)</div>
-        </div>
-        <div class="chart-wrap tall"><canvas id="forecastMonthlyChart"></canvas></div>
+        <div class="ph"><h3>Revenue vs Target รายเดือน (ทีมรวม)</h3></div>
+        <div class="cw h300"><canvas id="ov-bar"></canvas></div>
       </div>
     </div>
 
-  </div>
-</div>
+    <!-- ── VIEW 2: BU ── -->
+    <div class="view" id="view-bu">
+      <div class="kgrid k3">
+        <div class="kc"><div class="lbl">Forecast รวม (ทุก BU)</div><div class="val" id="bu-f">—</div></div>
+        <div class="kc"><div class="lbl">Actual สะสม</div><div class="val" id="bu-a">—</div><div class="sub" id="bu-p">—</div></div>
+        <div class="kc"><div class="lbl">จำนวน BU / ลูกค้า</div><div class="val" id="bu-n">—</div></div>
+      </div>
+
+      <div class="panel">
+        <div class="ph"><h3>Forecast vs Actual ต่อ BU</h3><span class="meta">จาก Enterprise Forecast sheet</span></div>
+        <table>
+          <thead><tr><th>BU / ลูกค้า</th><th>Tier</th><th>AE</th><th class="nr">Forecast</th><th class="nr">Actual</th><th>% Achieved</th></tr></thead>
+          <tbody id="bu-tbl"></tbody>
+        </table>
+      </div>
+
+      <div class="panel">
+        <div class="ph"><h3>Forecast vs Actual รายเดือน (รวมทุก BU)</h3></div>
+        <div class="cw h300"><canvas id="bu-line"></canvas></div>
+      </div>
+    </div>
+
+    <!-- ── VIEW 3: INDIVIDUAL ── -->
+    <div class="view" id="view-ind">
+      <div class="fbar">
+        <label style="font-size:12px;font-weight:600;color:var(--ink2);">เลือก AE</label>
+        <select id="ind-sel" onchange="renderInd()"></select>
+      </div>
+
+      <div class="kgrid k3">
+        <div class="kc"><div class="lbl">Target ทั้งปี</div><div class="val" id="ind-tgt">—</div></div>
+        <div class="kc"><div class="lbl">Revenue สะสม</div><div class="val" id="ind-act">—</div><div class="sub" id="ind-gp">—</div></div>
+        <div class="kc"><div class="lbl">% Achieved</div><div class="val" id="ind-pct">—</div><div class="sub" id="ind-gap">—</div></div>
+      </div>
+
+      <div class="panel">
+        <div class="ph"><h3 id="ind-ctitle">Revenue รายเดือน</h3></div>
+        <div class="cw h300"><canvas id="ind-bar"></canvas></div>
+      </div>
+
+      <div class="panel">
+        <div class="ph"><h3>ตารางรายเดือน</h3></div>
+        <table>
+          <thead><tr><th>เดือน</th><th class="nr">Target</th><th class="nr">Revenue</th><th class="nr">GP</th><th class="nr">Gap</th><th>% Achieved</th></tr></thead>
+          <tbody id="ind-tbl"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── VIEW 4: CLIENT ── -->
+    <div class="view" id="view-cl">
+      <div class="fbar">
+        <select id="cl-type" onchange="renderClient()">
+          <option value="all">ลูกค้าทั้งหมด</option>
+          <option value="new">ลูกค้าใหม่ (New)</option>
+          <option value="ret">ลูกค้าเก่า (Retention)</option>
+        </select>
+        <select id="cl-ae" onchange="renderClient()">
+          <option value="all">AE ทุกคน</option>
+        </select>
+      </div>
+
+      <div class="kgrid k3">
+        <div class="kc"><div class="lbl">Revenue รวม (Win)</div><div class="val" id="cl-rev">—</div></div>
+        <div class="kc"><div class="lbl">GP รวม</div><div class="val" id="cl-gp">—</div><div class="sub" id="cl-gpp">—</div></div>
+        <div class="kc"><div class="lbl">จำนวนลูกค้า</div><div class="val" id="cl-cnt">—</div></div>
+      </div>
+
+      <div class="panel">
+        <div class="ph">
+          <h3>รายลูกค้า (Win เท่านั้น)</h3>
+          <span class="meta"><span class="badge b">NEW</span> = ลูกค้าใหม่</span>
+        </div>
+        <table>
+          <thead><tr><th>ลูกค้า</th><th class="nr">Revenue</th><th class="nr">GP</th><th class="nr">% GP</th><th class="nr">แคมเปญ</th><th>AE</th></tr></thead>
+          <tbody id="cl-tbl"></tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- .main -->
+</div><!-- #scApp -->
 
 <script>
-/* ============================================================
-   CONFIG
-   ============================================================ */
-const REFRESH_INTERVAL_MS = 20 * 60 * 1000; // 20 นาที
-let API_BASE = localStorage.getItem('ae_dashboard_api_url') || '';
-let DATA = null; // { sales: {...}, forecast: {...}, generatedAt }
-let refreshTimer = null;
+/* ─── CONFIG ─── */
+const REFRESH = 20 * 60 * 1000;
+let API = localStorage.getItem('ae26_url') || '';
+let D   = null; // DATA
+let refT = null;
 
-const THB = new Intl.NumberFormat('th-TH', { maximumFractionDigits: 0 });
-function fmtMoney(n){ if(n===null||n===undefined||isNaN(n)) return '—'; return '฿' + THB.format(Math.round(n)); }
-function fmtNum(n){ if(n===null||n===undefined||isNaN(n)) return '—'; return THB.format(Math.round(n)); }
-function fmtPct(n){ if(n===null||n===undefined||isNaN(n)) return '—'; return n.toFixed(1) + '%'; }
-function initials(name){
-  if(!name) return '?';
-  const parts = name.trim().split(' ');
-  return parts.length>1 ? (parts[0][0]+parts[1][0]).toUpperCase() : name.slice(0,2).toUpperCase();
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const PAL = ['#0B1E3D','#1B7A4F','#B87000','#1A58A8','#7B3FA0','#B03030','#507070','#D06020'];
+
+const THB = new Intl.NumberFormat('th-TH',{maximumFractionDigits:0});
+const fm  = n  => n == null || isNaN(n) ? '—' : '฿'+THB.format(Math.round(n));
+const fp  = n  => n == null || isNaN(n) ? '—' : (n*100).toFixed(1)+'%';
+const fn  = n  => n == null || isNaN(n) ? '—' : THB.format(Math.round(n));
+const esc = s  => String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ini = n  => { const p=(n||'').trim().split(' '); return (p.length>1?p[0][0]+p[1][0]:n.slice(0,2)||'?').toUpperCase(); };
+const sum = (arr,key) => arr.reduce((s,r)=>s+(r[key]||0),0);
+
+function pbar(pct) {
+  const p = Math.min((pct||0)*100, 100);
+  const cls = p>=90?'g':p>=60?'a':'r';
+  return `<div class="pb"><div class="pb-rail"><div class="pb-fill ${cls}" style="width:${p}%"></div></div><span style="font-size:12px;white-space:nowrap">${fp(pct)}</span></div>`;
+}
+function badge(pct) {
+  if(pct==null) return '<span class="badge a">รอข้อมูล</span>';
+  const p=pct*100, cls=p>=90?'g':p>=60?'a':'r';
+  return `<span class="badge ${cls}">${p.toFixed(1)}%</span>`;
 }
 
-/* ============================================================
-   SETUP / API URL HANDLING
-   ============================================================ */
-function showSetupScreen(message){
-  document.getElementById('loadingScreen').style.display='none';
-  document.getElementById('app').style.display='none';
-  document.getElementById('setupScreen').style.display='flex';
-  if(message) document.getElementById('setupError').textContent = message;
-  if(API_BASE) document.getElementById('apiUrlInput').value = API_BASE;
+/* ─── SETUP ─── */
+function showSetup(msg){
+  document.getElementById('scLoad').style.display='none';
+  document.getElementById('scApp').style.display='none';
+  document.getElementById('scSetup').style.display='flex';
+  if(msg) document.getElementById('setupErr').textContent=msg;
+  if(API) document.getElementById('apiIn').value=API;
 }
-function saveApiUrl(){
-  const val = document.getElementById('apiUrlInput').value.trim();
-  if(!val.startsWith('http')){
-    document.getElementById('setupError').textContent = 'กรุณาใส่ URL ที่ถูกต้อง (ขึ้นต้นด้วย https://)';
-    return;
-  }
-  API_BASE = val;
-  localStorage.setItem('ae_dashboard_api_url', val);
-  document.getElementById('setupScreen').style.display='none';
-  document.getElementById('loadingScreen').style.display='flex';
-  loadAllData(false);
+function saveUrl(){
+  const v=document.getElementById('apiIn').value.trim();
+  if(!v.startsWith('http')){document.getElementById('setupErr').textContent='กรุณาใส่ URL ที่ถูกต้อง';return;}
+  API=v; localStorage.setItem('ae26_url',v);
+  document.getElementById('scSetup').style.display='none';
+  document.getElementById('scLoad').style.display='flex';
+  loadData(false);
+}
+function clearUrl(){
+  localStorage.removeItem('ae26_url'); API=''; D=null;
+  document.getElementById('scApp').style.display='none';
+  showSetup();
 }
 
-/* ============================================================
-   DATA LOADING
-   ============================================================ */
-// โหลดข้อมูลผ่าน JSONP (แทน fetch ปกติ) เพราะ Google Apps Script web app
-// จะ redirect ไปยัง script.googleusercontent.com ตอนส่งข้อมูลจริง
-// ซึ่งทำให้ CORS header หายไปและ fetch() ถูกบล็อกเสมอ ไม่ว่าจะ deploy ถูกแค่ไหนก็ตาม
-// JSONP หลีกเลี่ยงปัญหานี้ได้เพราะใช้ <script> tag โหลด ไม่ผ่านการตรวจ CORS แบบ fetch
-function loadViaJSONP(url, timeoutMs){
-  return new Promise(function(resolve, reject){
-    const callbackName = 'aeDashboardCb_' + Date.now() + '_' + Math.floor(Math.random()*100000);
-    const script = document.createElement('script');
-    let settled = false;
-
-    const cleanup = function(){
-      delete window[callbackName];
-      if(script.parentNode) script.parentNode.removeChild(script);
-      clearTimeout(timer);
-    };
-
-    window[callbackName] = function(data){
-      if(settled) return;
-      settled = true;
-      cleanup();
-      resolve(data);
-    };
-
-    const timer = setTimeout(function(){
-      if(settled) return;
-      settled = true;
-      cleanup();
-      reject(new Error('หมดเวลาเชื่อมต่อ (timeout) — ลองเช็คว่า URL ถูกต้องและ Deploy เป็น Anyone แล้ว'));
-    }, timeoutMs || 20000);
-
-    script.onerror = function(){
-      if(settled) return;
-      settled = true;
-      cleanup();
-      reject(new Error('โหลดสคริปต์ไม่สำเร็จ — ตรวจสอบว่า URL ถูกต้อง'));
-    };
-
-    const sep = url.indexOf('?')>-1 ? '&' : '?';
-    script.src = url + sep + 'callback=' + callbackName;
-    document.body.appendChild(script);
+/* ─── JSONP LOAD ─── */
+function jsonp(url,ms){
+  return new Promise((res,rej)=>{
+    const cb='aeCb_'+Date.now()+'_'+Math.random().toString(36).slice(2,8);
+    const sc=document.createElement('script');
+    let done=false;
+    const clean=()=>{delete window[cb];sc.parentNode&&sc.parentNode.removeChild(sc);clearTimeout(t);};
+    window[cb]=d=>{if(done)return;done=true;clean();res(d);};
+    const t=setTimeout(()=>{if(done)return;done=true;clean();rej(new Error('หมดเวลาเชื่อมต่อ'));},ms||28000);
+    sc.onerror=()=>{if(done)return;done=true;clean();rej(new Error('โหลดสคริปต์ไม่สำเร็จ'));};
+    sc.src=url+(url.includes('?')?'&':'?')+'callback='+cb;
+    document.body.appendChild(sc);
   });
 }
 
-async function loadAllData(isManualRefresh){
-  if(!API_BASE){
-    showSetupScreen();
-    return;
-  }
-  const errorBanner = document.getElementById('errorBanner');
-  errorBanner.innerHTML = '';
-
+async function loadData(manual){
+  if(!API){showSetup();return;}
+  document.getElementById('errBnr').innerHTML='';
   try{
-    const url = API_BASE + (API_BASE.indexOf('?')>-1 ? '&' : '?') + 'action=all&_t=' + Date.now();
-    const json = await loadViaJSONP(url, 25000);
-    if(json.error){ throw new Error(json.message || 'เกิดข้อผิดพลาดจาก Apps Script'); }
-
-    DATA = json;
-    document.getElementById('loadingScreen').style.display='none';
-    document.getElementById('setupScreen').style.display='none';
-    document.getElementById('app').style.display='flex';
-
+    const json=await jsonp(API+(API.includes('?')?'&':'?')+'action=all&_t='+Date.now(),30000);
+    if(json.error) throw new Error(json.message);
+    D=json;
+    document.getElementById('scLoad').style.display='none';
+    document.getElementById('scSetup').style.display='none';
+    document.getElementById('scApp').style.display='flex';
     renderAll();
-    updateLastUpdated();
-    scheduleNextRefresh();
-
+    const now=new Date();
+    document.getElementById('tUpd').textContent='อัปเดต: '+now.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'});
+    const nxt=new Date(Date.now()+REFRESH);
+    document.getElementById('tNext').textContent='ถัดไป: '+nxt.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'});
+    if(refT) clearTimeout(refT);
+    refT=setTimeout(()=>loadData(false),REFRESH);
   }catch(err){
     console.error(err);
-    if(!DATA){
-      // ครั้งแรกที่โหลดแล้ว fail -> ให้กลับไปหน้า setup เผื่อ URL ผิด
-      document.getElementById('loadingScreen').style.display='none';
-      document.getElementById('app').style.display='none';
-      showSetupScreen('เชื่อมต่อไม่สำเร็จ: ' + err.message + ' — ตรวจสอบว่า URL ถูกต้องและ Deploy เป็น "Anyone" แล้ว');
-    }else{
-      errorBanner.innerHTML = '<div class="error-box">⚠ รีเฟรชข้อมูลล่าสุดไม่สำเร็จ (' + err.message + ') — แสดงข้อมูลล่าสุดที่เคยโหลดได้แทน</div>';
-    }
+    if(!D){document.getElementById('scLoad').style.display='none';showSetup('เชื่อมต่อไม่สำเร็จ: '+err.message);}
+    else document.getElementById('errBnr').innerHTML=`<div class="ebx">⚠ รีเฟรชไม่สำเร็จ: ${esc(err.message)} — แสดงข้อมูลล่าสุด</div>`;
   }
 }
 
-function updateLastUpdated(){
-  const now = new Date();
-  document.getElementById('lastUpdated').textContent = 'อัปเดต: ' + now.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'});
-}
-function scheduleNextRefresh(){
-  if(refreshTimer) clearTimeout(refreshTimer);
-  const next = new Date(Date.now() + REFRESH_INTERVAL_MS);
-  document.getElementById('nextRefresh').textContent = 'ครั้งถัดไป: ' + next.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'});
-  refreshTimer = setTimeout(function(){ loadAllData(false); }, REFRESH_INTERVAL_MS);
-}
-
-/* ============================================================
-   NAVIGATION
-   ============================================================ */
-const VIEW_TITLES = {
-  overview: ['ภาพรวมทีม & รายคน', 'ยอดขายที่ปิดสำเร็จ (Win) เท่านั้น — อัปเดตอัตโนมัติทุก 20 นาที'],
-  monthly: ['Performance รายเดือน', 'ดูเทรนด์ยอดขายของแต่ละ AE ตลอดทั้งปี'],
-  client: ['Performance แยกตามลูกค้า', 'เลือกลูกค้าเพื่อดูรายละเอียดแคมเปญ'],
-  forecast: ['Forecast ทั้งปี', 'เทียบ Forecast กับ Actual ของลูกค้าแต่ละราย']
+/* ─── NAV ─── */
+const PAGE_META={
+  ov: ['ภาพรวม AE','ยอดรวมทีมและรายบุคคล จาก Summary AE'],
+  bu: ['แยกราย BU / ลูกค้า','Forecast vs Actual จาก Enterprise Forecast sheet'],
+  ind:['รายบุคคล','Target / Revenue / GP และ % Achieved รายเดือน'],
+  cl: ['รายลูกค้า','แยกลูกค้าใหม่-เก่า จากตารางรายการทุก MID sheet (Win เท่านั้น)'],
 };
-
-document.querySelectorAll('.nav-item').forEach(function(item){
-  item.addEventListener('click', function(){
-    const view = item.getAttribute('data-view');
-    document.querySelectorAll('.nav-item').forEach(function(i){ i.classList.remove('active'); });
-    item.classList.add('active');
-    document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
-    document.getElementById('view-' + view).classList.add('active');
-    document.getElementById('pageTitle').textContent = VIEW_TITLES[view][0];
-    document.getElementById('pageSub').textContent = VIEW_TITLES[view][1];
+document.querySelectorAll('.ni').forEach(el=>{
+  el.addEventListener('click',()=>{
+    const v=el.dataset.v;
+    document.querySelectorAll('.ni').forEach(i=>i.classList.remove('on'));
+    el.classList.add('on');
+    document.querySelectorAll('.view').forEach(vv=>vv.classList.remove('on'));
+    document.getElementById('view-'+v).classList.add('on');
+    const [t,s]=PAGE_META[v];
+    document.getElementById('pgTitle').textContent=t;
+    document.getElementById('pgSub').textContent=s;
   });
 });
 
-/* ============================================================
-   RENDER: OVERVIEW
-   ============================================================ */
-let aeShareChartInstance = null;
+/* ─── CHARTS ─── */
+const CH={};
+function mkChart(id,cfg){if(CH[id])CH[id].destroy();CH[id]=new Chart(document.getElementById(id).getContext('2d'),cfg);return CH[id];}
 
-function renderOverview(){
-  const sales = DATA.sales;
-  const total = sales.teamTotal || {budget:0,gp:0,count:0,aeCount:0};
+/* ─── RENDER ALL ─── */
+function renderAll(){renderOv();renderBU();populateIndSel();renderInd();populateClFilters();renderClient();}
 
-  document.getElementById('kpiTotalBudget').textContent = fmtMoney(total.budget);
-  document.getElementById('kpiTotalGP').textContent = fmtMoney(total.gp);
-  const gpPct = total.budget>0 ? (total.gp/total.budget*100) : 0;
-  document.getElementById('kpiGpPct').textContent = '% GP เฉลี่ย ' + fmtPct(gpPct);
-  document.getElementById('kpiCount').textContent = fmtNum(total.count);
-  document.getElementById('kpiAeCount').textContent = fmtNum(total.aeCount);
+/* ─── VIEW 1: OVERVIEW ─── */
+function renderOv(){
+  const s=D.summary; if(!s) return;
+  const {teamTarget:tgt,teamActual:act,teamGap:gap,teamPctAch:pct,people}=s;
 
-  const tbody = document.getElementById('aeTableBody');
-  tbody.innerHTML = '';
-  const byAE = sales.byAE || [];
+  document.getElementById('ov-tgt').textContent=fm(tgt);
+  document.getElementById('ov-act').textContent=fm(act);
+  document.getElementById('ov-pct').textContent=fp(pct)+' ของ Target';
+  document.getElementById('ov-pct').className='sub '+(pct>=1?'g':pct>=.6?'a':'r');
+  document.getElementById('ov-gap').textContent=fm(gap);
+  document.getElementById('ov-gsub').textContent=gap<=0?'✓ เกิน Target แล้ว':'ยังขาดอยู่';
+  document.getElementById('ov-ae').textContent=people.length;
 
-  if(byAE.length===0){
-    document.getElementById('aeEmptyState').style.display='block';
-  }else{
-    document.getElementById('aeEmptyState').style.display='none';
-    byAE.forEach(function(row){
-      const pctOfTeam = total.budget>0 ? (row.budget/total.budget*100) : 0;
-      const rowGpPct = row.budget>0 ? (row.gp/row.budget*100) : 0;
-      const tr = document.createElement('tr');
-      tr.innerHTML =
-        '<td><div class="name-cell"><div class="avatar">'+initials(row.ae)+'</div>'+escapeHtml(row.ae)+'</div></td>'+
-        '<td class="num">'+fmtMoney(row.budget)+'</td>'+
-        '<td class="num">'+fmtMoney(row.gp)+'</td>'+
-        '<td class="num">'+fmtPct(rowGpPct)+'</td>'+
-        '<td class="num">'+fmtNum(row.count)+'</td>'+
-        '<td class="num">'+fmtPct(pctOfTeam)+'</td>';
-      tbody.appendChild(tr);
-    });
-  }
+  document.getElementById('ov-tbl').innerHTML=people.map(p=>`
+    <tr>
+      <td><div class="nc"><div class="av">${esc(ini(p.name))}</div>${esc(p.name)}</div></td>
+      <td class="nr">${fm(p.targetYTD)}</td>
+      <td class="nr">${fm(p.actualYTD)}</td>
+      <td class="nr" style="color:var(--red)">${fm(p.gap)}</td>
+      <td>${pbar(p.pctAch)}</td>
+    </tr>`).join('');
 
-  // Chart: share by AE
-  const ctx = document.getElementById('aeShareChart').getContext('2d');
-  if(aeShareChartInstance) aeShareChartInstance.destroy();
-  const palette = ['#0B1E3D','#1F8A5F','#D97706','#5B6478','#7C93BD','#C0392B','#8C6B45'];
-  aeShareChartInstance = new Chart(ctx, {
-    type: 'doughnut',
-    data: {
-      labels: byAE.map(function(r){return r.ae;}),
-      datasets: [{
-        data: byAE.map(function(r){return r.budget;}),
-        backgroundColor: byAE.map(function(_,i){return palette[i%palette.length];}),
-        borderWidth: 2,
-        borderColor: '#fff'
-      }]
-    },
-    options: {
-      maintainAspectRatio:false,
-      plugins:{
-        legend:{position:'right', labels:{font:{family:'Inter'},boxWidth:12,padding:14}},
-        tooltip:{callbacks:{label:function(c){return c.label+': '+fmtMoney(c.raw);}}}
-      }
-    }
+  mkChart('ov-pie',{type:'doughnut',
+    data:{labels:people.map(p=>p.name),datasets:[{data:people.map(p=>p.actualYTD),backgroundColor:PAL,borderWidth:2,borderColor:'#fff'}]},
+    options:{maintainAspectRatio:false,plugins:{legend:{position:'right',labels:{font:{family:'Inter'},boxWidth:10,padding:11}},tooltip:{callbacks:{label:c=>c.label+': '+fm(c.raw)}}}}
+  });
+
+  // Team monthly: sum across people
+  const rows=MONTHS.map((m,mi)=>{
+    let t=0,a=0;
+    people.forEach(p=>{const mo=p.monthly[mi];if(mo){t+=mo.target||0;a+=mo.actual||0;}});
+    return{t,a};
+  });
+  mkChart('ov-bar',{type:'bar',
+    data:{labels:MONTHS,datasets:[
+      {label:'Target',data:rows.map(r=>r.t),backgroundColor:'rgba(11,30,61,.13)',borderRadius:4,maxBarThickness:26},
+      {label:'Revenue',data:rows.map(r=>r.a),backgroundColor:'#0B1E3D',borderRadius:4,maxBarThickness:26}
+    ]},
+    options:{maintainAspectRatio:false,
+      scales:{y:{ticks:{callback:v=>fm(v)}}},
+      plugins:{legend:{position:'top'},tooltip:{callbacks:{label:c=>c.dataset.label+': '+fm(c.raw)}}}}
   });
 }
 
-/* ============================================================
-   RENDER: MONTHLY
-   ============================================================ */
-let monthlyTrendChartInstance = null;
-const MONTH_ABBR = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+/* ─── VIEW 2: BU ─── */
+function renderBU(){
+  const fc=D.forecast; if(!fc) return;
+  const bl=fc.buList||[];
 
-function populateMonthlyAeFilter(){
-  const sel = document.getElementById('monthlyAeFilter');
-  const sales = DATA.sales;
-  const aeNames = (sales.byAE||[]).map(function(r){return r.ae;});
-  sel.innerHTML = '<option value="__all__">ทุกคน (รวมทีม)</option>' +
-    aeNames.map(function(n){return '<option value="'+escapeHtml(n)+'">'+escapeHtml(n)+'</option>';}).join('');
-}
+  const totF=sum(bl,'forecastYTD'), totA=bl.reduce((s,r)=>s+(r.actualYTD||0),0);
+  document.getElementById('bu-f').textContent=fm(totF);
+  document.getElementById('bu-a').textContent=fm(totA);
+  document.getElementById('bu-p').textContent=fp(totF>0?totA/totF:null)+' Achieved';
+  document.getElementById('bu-n').textContent=bl.length;
 
-function renderMonthlyView(){
-  const sales = DATA.sales;
-  const selectedAe = document.getElementById('monthlyAeFilter').value;
-  document.getElementById('monthlyChartTitle').textContent =
-    selectedAe==='__all__' ? 'เทรนด์ยอดขายรายเดือน (รวมทีม)' : 'เทรนด์ยอดขายรายเดือน — ' + selectedAe;
+  document.getElementById('bu-tbl').innerHTML=bl.map(r=>`
+    <tr>
+      <td style="font-weight:600">${esc(r.client)}</td>
+      <td style="font-size:11px;color:var(--ink2)">${esc(shortTier(r.tier))}</td>
+      <td>${esc(r.ae||'—')}</td>
+      <td class="nr">${fm(r.forecastYTD)}</td>
+      <td class="nr">${r.actualYTD!=null?fm(r.actualYTD):'—'}</td>
+      <td>${badge(r.achieved)}</td>
+    </tr>`).join('');
 
-  const byMonth = sales.byMonth || [];
-  const monthlyBudget = {};
-  const monthlyGP = {};
-  const monthlyCount = {};
-  MONTH_ABBR.forEach(function(m){ monthlyBudget[m]=0; monthlyGP[m]=0; monthlyCount[m]=0; });
-
-  byMonth.forEach(function(row){
-    if(selectedAe!=='__all__' && row.ae!==selectedAe) return;
-    if(!monthlyBudget.hasOwnProperty(row.month)) return;
-    monthlyBudget[row.month]+=row.budget;
-    monthlyGP[row.month]+=row.gp;
-    monthlyCount[row.month]+=row.count;
-  });
-
-  const ctx = document.getElementById('monthlyTrendChart').getContext('2d');
-  if(monthlyTrendChartInstance) monthlyTrendChartInstance.destroy();
-  monthlyTrendChartInstance = new Chart(ctx, {
-    type:'bar',
-    data:{
-      labels: MONTH_ABBR,
-      datasets:[
-        {
-          type:'bar', label:'ยอดขาย', data: MONTH_ABBR.map(function(m){return monthlyBudget[m];}),
-          backgroundColor:'#0B1E3D', borderRadius:5, maxBarThickness:36
-        },
-        {
-          type:'line', label:'GP', data: MONTH_ABBR.map(function(m){return monthlyGP[m];}),
-          borderColor:'#1F8A5F', backgroundColor:'#1F8A5F', tension:0.35, pointRadius:3, yAxisID:'y'
-        }
-      ]
-    },
-    options:{
-      maintainAspectRatio:false,
-      scales:{ y:{ ticks:{ callback:function(v){return fmtMoney(v);} } } },
-      plugins:{ legend:{position:'top'}, tooltip:{callbacks:{label:function(c){return c.dataset.label+': '+fmtMoney(c.raw);}}} }
-    }
-  });
-
-  const tbody = document.getElementById('monthlyTableBody');
-  tbody.innerHTML = MONTH_ABBR.map(function(m){
-    const b = monthlyBudget[m], g = monthlyGP[m], c = monthlyCount[m];
-    const gpPct = b>0 ? (g/b*100) : 0;
-    return '<tr><td>'+m+'</td><td class="num">'+fmtMoney(b)+'</td><td class="num">'+fmtMoney(g)+'</td>'+
-      '<td class="num">'+(b>0?fmtPct(gpPct):'—')+'</td><td class="num">'+fmtNum(c)+'</td></tr>';
-  }).join('');
-}
-
-/* ============================================================
-   RENDER: BY CLIENT
-   ============================================================ */
-function populateClientFilter(){
-  const sales = DATA.sales;
-  const sel = document.getElementById('clientFilter');
-  const names = (sales.byClient||[]).map(function(r){return r.client;});
-  sel.innerHTML = '<option value="__all__">ลูกค้าทั้งหมด</option>' +
-    names.map(function(n){return '<option value="'+escapeHtml(n)+'">'+escapeHtml(n)+'</option>';}).join('');
-}
-
-function renderClientView(){
-  const sales = DATA.sales;
-  const selected = document.getElementById('clientFilter').value;
-  const byClient = sales.byClient || [];
-
-  if(selected==='__all__'){
-    document.getElementById('clientAllWrap').style.display='block';
-    document.getElementById('clientDetailWrap').style.display='none';
-
-    const tbody = document.getElementById('clientTableBody');
-    if(byClient.length===0){
-      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--ink-soft);padding:32px;">ยังไม่มีข้อมูลแคมเปญที่ Win</td></tr>';
-      return;
-    }
-    tbody.innerHTML = byClient.map(function(row){
-      const gpPct = row.budget>0 ? (row.gp/row.budget*100) : 0;
-      return '<tr><td style="font-weight:600;">'+escapeHtml(row.client)+'</td>'+
-        '<td class="num">'+fmtMoney(row.budget)+'</td>'+
-        '<td class="num">'+fmtMoney(row.gp)+'</td>'+
-        '<td class="num">'+fmtPct(gpPct)+'</td>'+
-        '<td class="num">'+fmtNum(row.count)+'</td>'+
-        '<td>'+row.aeList.map(escapeHtml).join(', ')+'</td></tr>';
-    }).join('');
-  }else{
-    document.getElementById('clientAllWrap').style.display='none';
-    document.getElementById('clientDetailWrap').style.display='block';
-
-    const clientRows = (sales.rows||[]).filter(function(r){ return r.isWin && r.client===selected; });
-    const budget = clientRows.reduce(function(s,r){return s+r.budget;},0);
-    const gp = clientRows.reduce(function(s,r){return s+r.gp;},0);
-
-    document.getElementById('clientDetailTitle').textContent = 'รายการแคมเปญ — ' + selected;
-    document.getElementById('clientDetailBudget').textContent = fmtMoney(budget);
-    document.getElementById('clientDetailGP').textContent = fmtMoney(gp);
-    document.getElementById('clientDetailCount').textContent = fmtNum(clientRows.length);
-
-    const tbody = document.getElementById('clientDetailTableBody');
-    tbody.innerHTML = clientRows.map(function(r){
-      return '<tr><td>'+escapeHtml(r.project)+'</td><td>'+escapeHtml(r.ae)+'</td>'+
-        '<td class="num">'+fmtMoney(r.budget)+'</td><td class="num">'+fmtMoney(r.gp)+'</td>'+
-        '<td>'+escapeHtml(r.campaignStart)+' – '+escapeHtml(r.campaignEnd)+'</td></tr>';
-    }).join('');
-  }
-}
-
-/* ============================================================
-   RENDER: FORECAST
-   ============================================================ */
-let forecastMonthlyChartInstance = null;
-
-function populateForecastFilters(){
-  const fc = DATA.forecast;
-  const clientSel = document.getElementById('forecastClientFilter');
-  const tierSel = document.getElementById('forecastTierFilter');
-  const clients = (fc.clientSummary||[]).map(function(r){return r.client;});
-  const tiers = Array.from(new Set((fc.clientSummary||[]).map(function(r){return r.tier;}).filter(Boolean)));
-
-  clientSel.innerHTML = '<option value="__all__">ลูกค้าทั้งหมด</option>' +
-    clients.map(function(n){return '<option value="'+escapeHtml(n)+'">'+escapeHtml(n)+'</option>';}).join('');
-  tierSel.innerHTML = '<option value="__all__">ทุก Tier</option>' +
-    tiers.map(function(t){return '<option value="'+escapeHtml(t)+'">'+escapeHtml(t)+'</option>';}).join('');
-}
-
-function achievedBadge(pct){
-  if(pct===null||pct===undefined) return '<span class="badge warn">รอข้อมูล</span>';
-  if(pct>=90) return '<span class="badge good">'+fmtPct(pct)+'</span>';
-  if(pct>=60) return '<span class="badge warn">'+fmtPct(pct)+'</span>';
-  return '<span class="badge bad">'+fmtPct(pct)+'</span>';
-}
-
-function renderForecastView(){
-  const fc = DATA.forecast;
-  const selectedClient = document.getElementById('forecastClientFilter').value;
-  const selectedTier = document.getElementById('forecastTierFilter').value;
-
-  let list = (fc.clientSummary||[]).slice();
-  if(selectedTier!=='__all__') list = list.filter(function(r){return r.tier===selectedTier;});
-  if(selectedClient!=='__all__') list = list.filter(function(r){return r.client===selectedClient;});
-
-  const totalForecast = list.reduce(function(s,r){return s+r.forecastTotal;},0);
-  const totalActual = list.reduce(function(s,r){return s+r.actualTotal;},0);
-  document.getElementById('fcTotalForecast').textContent = fmtMoney(totalForecast);
-  document.getElementById('fcTotalActual').textContent = fmtMoney(totalActual);
-  document.getElementById('fcTotalAchieved').textContent = totalForecast>0 ? fmtPct(totalActual/totalForecast*100) : '—';
-
-  const tbody = document.getElementById('forecastTableBody');
-  if(list.length===0){
-    tbody.innerHTML = '';
-    document.getElementById('forecastEmptyState').style.display='block';
-  }else{
-    document.getElementById('forecastEmptyState').style.display='none';
-    tbody.innerHTML = list.map(function(row){
-      return '<tr><td>'+escapeHtml(shortTier(row.tier))+'</td>'+
-        '<td style="font-weight:600;">'+escapeHtml(row.client)+'</td>'+
-        '<td>'+escapeHtml(row.ae||'—')+'</td>'+
-        '<td class="num">'+fmtMoney(row.forecastTotal)+'</td>'+
-        '<td class="num">'+fmtMoney(row.actualTotal)+'</td>'+
-        '<td class="num">'+fmtMoney(row.gpTotal)+'</td>'+
-        '<td class="num" style="text-align:right;">'+achievedBadge(row.achievedPct)+'</td></tr>';
-    }).join('');
-  }
-
-  // ถ้าเลือกลูกค้าเดียว -> โชว์กราฟรายเดือน
-  if(selectedClient!=='__all__' && list.length>=1){
-    document.getElementById('forecastDetailPanel').style.display='block';
-    document.getElementById('forecastDetailTitle').textContent = 'Forecast รายเดือน — ' + selectedClient;
-    renderForecastMonthlyChart(list[0]);
-  }else{
-    document.getElementById('forecastDetailPanel').style.display='none';
-  }
-}
-
-function renderForecastMonthlyChart(clientRow){
-  const monthly = clientRow.monthly || [];
-  const ctx = document.getElementById('forecastMonthlyChart').getContext('2d');
-  if(forecastMonthlyChartInstance) forecastMonthlyChartInstance.destroy();
-  forecastMonthlyChartInstance = new Chart(ctx, {
-    type:'line',
-    data:{
-      labels: monthly.map(function(m){return m.month;}),
-      datasets:[
-        {
-          label:'Forecast', data: monthly.map(function(m){return m.forecast;}),
-          borderColor:'#7C93BD', backgroundColor:'rgba(124,147,189,0.08)', borderDash:[5,4],
-          tension:0.3, pointRadius:3, fill:false
-        },
-        {
-          label:'Actual', data: monthly.map(function(m){return m.actual;}),
-          borderColor:'#1F8A5F', backgroundColor:'rgba(31,138,95,0.12)',
-          tension:0.3, pointRadius:3, fill:true, spanGaps:true
-        }
-      ]
-    },
-    options:{
-      maintainAspectRatio:false,
-      scales:{ y:{ ticks:{ callback:function(v){return fmtMoney(v);} } } },
-      plugins:{ legend:{position:'top'}, tooltip:{callbacks:{label:function(c){
-        const v=c.raw; return c.dataset.label+': '+(v===null?'ยังไม่มีข้อมูล':fmtMoney(v));
-      }}} }
-    }
+  const mF=MONTHS.map((_,mi)=>sum(bl.map(r=>({v:r.monthly[mi]?.forecast||0})),'v'));
+  const mA=MONTHS.map((_,mi)=>bl.reduce((s,r)=>{const v=r.monthly[mi]?.actual;return s+(v!=null?v:0);},0));
+  mkChart('bu-line',{type:'line',
+    data:{labels:MONTHS,datasets:[
+      {label:'Forecast',data:mF,borderColor:'#99AECE',borderDash:[5,4],tension:.3,pointRadius:3,fill:false},
+      {label:'Actual',data:mA,borderColor:'#0B1E3D',tension:.3,pointRadius:3,fill:false}
+    ]},
+    options:{maintainAspectRatio:false,
+      scales:{y:{ticks:{callback:v=>fm(v)}}},
+      plugins:{legend:{position:'top'},tooltip:{callbacks:{label:c=>c.dataset.label+': '+fm(c.raw)}}}}
   });
 }
-
-function shortTier(tier){
-  if(!tier) return '—';
-  if(tier.indexOf('Diamond')>-1) return 'Diamond';
-  if(tier.indexOf('Gold')>-1) return 'Gold';
-  return tier.split('(')[0].trim();
+function shortTier(t){
+  if(!t) return '';
+  if(t.includes('Diamond')||t.includes('24m')) return 'Diamond';
+  if(t.includes('Platinum')||t.includes('12m')) return 'Platinum';
+  if(t.includes('Gold')||t.includes('5m')) return 'Gold';
+  return t.split('(')[0].trim().slice(0,14);
 }
 
-/* ============================================================
-   UTILS
-   ============================================================ */
-function escapeHtml(s){
-  if(s===null||s===undefined) return '';
-  return String(s).replace(/[&<>"']/g, function(c){
-    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+/* ─── VIEW 3: INDIVIDUAL ─── */
+function populateIndSel(){
+  const ppl=(D.summary?.people)||[];
+  document.getElementById('ind-sel').innerHTML=ppl.map(p=>`<option value="${esc(p.name)}">${esc(p.name)}</option>`).join('');
+}
+function renderInd(){
+  const name=document.getElementById('ind-sel').value;
+  const p=(D.summary?.people||[]).find(x=>x.name===name);
+  if(!p) return;
+
+  document.getElementById('ind-tgt').textContent=fm(p.targetYTD);
+  document.getElementById('ind-act').textContent=fm(p.actualYTD);
+  document.getElementById('ind-gp').textContent='GP: '+fm(p.gpYTD)+' ('+fp(p.gpPct)+')';
+  document.getElementById('ind-pct').textContent=fp(p.pctAch);
+  document.getElementById('ind-pct').style.color=(p.pctAch||0)>=.9?'var(--green)':(p.pctAch||0)>=.6?'var(--amber)':'var(--red)';
+  document.getElementById('ind-gap').textContent='ขาดอีก '+fm(p.gap);
+  document.getElementById('ind-ctitle').textContent='Revenue รายเดือน — '+p.name;
+
+  mkChart('ind-bar',{type:'bar',
+    data:{labels:MONTHS,datasets:[
+      {label:'Target',data:p.monthly.map(m=>m.target),backgroundColor:'rgba(11,30,61,.12)',borderRadius:4,maxBarThickness:22},
+      {label:'Revenue',data:p.monthly.map(m=>m.actual),backgroundColor:'#0B1E3D',borderRadius:4,maxBarThickness:22},
+      {type:'line',label:'GP',data:p.monthly.map(m=>m.gp),borderColor:'#1B7A4F',tension:.3,pointRadius:3,fill:false}
+    ]},
+    options:{maintainAspectRatio:false,
+      scales:{y:{ticks:{callback:v=>fm(v)}}},
+      plugins:{legend:{position:'top'},tooltip:{callbacks:{label:c=>c.dataset.label+': '+fm(c.raw)}}}}
   });
+
+  document.getElementById('ind-tbl').innerHTML=p.monthly.map(m=>`
+    <tr>
+      <td>${esc(m.month)}</td>
+      <td class="nr">${fm(m.target)}</td>
+      <td class="nr">${m.actual!=null?fm(m.actual):'—'}</td>
+      <td class="nr">${m.gp!=null?fm(m.gp):'—'}</td>
+      <td class="nr" style="color:var(--red)">${m.gap!=null?fm(m.gap):'—'}</td>
+      <td>${badge(m.pctAch)}</td>
+    </tr>`).join('');
 }
 
-function renderAll(){
-  renderOverview();
-  populateMonthlyAeFilter();
-  renderMonthlyView();
-  populateClientFilter();
-  renderClientView();
-  populateForecastFilters();
-  renderForecastView();
+/* ─── VIEW 4: CLIENT ─── */
+function populateClFilters(){
+  const rows=(D.clients?.clientSummary)||[];
+  const aeSet={};
+  rows.forEach(r=>r.aeList.forEach(a=>{if(a)aeSet[a]=true;}));
+  const sel=document.getElementById('cl-ae');
+  sel.innerHTML='<option value="all">AE ทุกคน</option>'+
+    Object.keys(aeSet).sort().map(a=>`<option value="${esc(a)}">${esc(a)}</option>`).join('');
+}
+function renderClient(){
+  const typeF=document.getElementById('cl-type').value;
+  const aeF=document.getElementById('cl-ae').value;
+  let list=(D.clients?.clientSummary)||[];
+  if(typeF==='new') list=list.filter(c=>c.isNew);
+  if(typeF==='ret') list=list.filter(c=>!c.isNew);
+  if(aeF!=='all')   list=list.filter(c=>c.aeList.includes(aeF));
+
+  const totB=sum(list,'budget'), totG=sum(list,'gp');
+  document.getElementById('cl-rev').textContent=fm(totB);
+  document.getElementById('cl-gp').textContent=fm(totG);
+  document.getElementById('cl-gpp').textContent='% GP: '+fp(totB>0?totG/totB:null);
+  document.getElementById('cl-cnt').textContent=list.length;
+
+  document.getElementById('cl-tbl').innerHTML=list.map(c=>`
+    <tr>
+      <td><span style="font-weight:600">${esc(c.client)}</span>${c.isNew?'<span class="tn">NEW</span>':'<span class="tr">Ret</span>'}</td>
+      <td class="nr">${fm(c.budget)}</td>
+      <td class="nr">${fm(c.gp)}</td>
+      <td class="nr">${fp(c.gpPct)}</td>
+      <td class="nr">${fn(c.count)}</td>
+      <td style="font-size:12px">${c.aeList.map(esc).join(', ')}</td>
+    </tr>`).join('');
 }
 
-/* ============================================================
-   INIT
-   ============================================================ */
-(function init(){
-  if(!API_BASE){
-    document.getElementById('loadingScreen').style.display='none';
-    showSetupScreen();
-  }else{
-    loadAllData(false);
-  }
+/* ─── INIT ─── */
+(function(){
+  if(!API){document.getElementById('scLoad').style.display='none';showSetup();}
+  else loadData(false);
 })();
 </script>
 </body>

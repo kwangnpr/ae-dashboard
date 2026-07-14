@@ -214,22 +214,32 @@ input[type=text]{width:100%;padding:10px 12px;border:1px solid var(--line);borde
 
     <!-- ── VIEW 2: BU ── -->
     <div class="view" id="view-bu">
+      <div class="fbar">
+        <label style="font-size:12px;font-weight:600;color:var(--ink2);">เลือก BU</label>
+        <select id="bu-sel" onchange="renderBU()">
+          <option value="Digital">Digital (MID - Digital)</option>
+          <option value="Tech">Tech (MID - Tech)</option>
+          <option value="Consult">Consult (MID - Consult)</option>
+          <option value="Event">Event (MID - Event)</option>
+        </select>
+      </div>
+
       <div class="kgrid k3">
-        <div class="kc"><div class="lbl">Forecast รวม (ทุก BU)</div><div class="val" id="bu-f">—</div></div>
-        <div class="kc"><div class="lbl">Actual สะสม</div><div class="val" id="bu-a">—</div><div class="sub" id="bu-p">—</div></div>
-        <div class="kc"><div class="lbl">จำนวน BU / ลูกค้า</div><div class="val" id="bu-n">—</div></div>
+        <div class="kc"><div class="lbl">Revenue รวม (Win)</div><div class="val" id="bu-f">—</div></div>
+        <div class="kc"><div class="lbl">GP รวม</div><div class="val" id="bu-a">—</div><div class="sub" id="bu-p">—</div></div>
+        <div class="kc"><div class="lbl">จำนวน Win แคมเปญ</div><div class="val" id="bu-n">—</div></div>
       </div>
 
       <div class="panel">
-        <div class="ph"><h3>Forecast vs Actual ต่อ BU</h3><span class="meta">จาก Enterprise Forecast sheet</span></div>
+        <div class="ph"><h3 id="bu-tbl-title">รายการลูกค้าใน BU</h3><span class="meta" id="bu-meta">จากตารางรายการ</span></div>
         <table>
-          <thead><tr><th>BU / ลูกค้า</th><th>Tier</th><th>AE</th><th class="nr">Forecast</th><th class="nr">Actual</th><th>% Achieved</th></tr></thead>
+          <thead><tr><th>ลูกค้า</th><th>Sale Type</th><th>AE</th><th class="nr">Budget</th><th class="nr">GP</th><th class="nr">% GP</th><th class="nr">แคมเปญ</th></tr></thead>
           <tbody id="bu-tbl"></tbody>
         </table>
       </div>
 
       <div class="panel">
-        <div class="ph"><h3>Forecast vs Actual รายเดือน (รวมทุก BU)</h3></div>
+        <div class="ph"><h3 id="bu-chart-title">Revenue รายเดือน</h3></div>
         <div class="cw h300"><canvas id="bu-line"></canvas></div>
       </div>
     </div>
@@ -271,6 +281,15 @@ input[type=text]{width:100%;padding:10px 12px;border:1px solid var(--line);borde
         </select>
         <select id="cl-ae" onchange="renderClient()">
           <option value="all">AE ทุกคน</option>
+        </select>
+        <select id="cl-bu" onchange="renderClient()">
+          <option value="all">ทุก BU</option>
+          <option value="Digital">Digital</option>
+          <option value="Tech">Tech</option>
+          <option value="Consult">Consult</option>
+          <option value="Event">Event</option>
+          <option value="Min">Min</option>
+          <option value="Kwang">Kwang</option>
         </select>
       </div>
 
@@ -458,34 +477,49 @@ function renderOv(){
 
 /* ─── VIEW 2: BU ─── */
 function renderBU(){
-  const fc=D.forecast; if(!fc) return;
-  const bl=fc.buList||[];
+  const cl=D.clients; if(!cl) return;
+  const selBU=document.getElementById('bu-sel').value;
 
-  const totF=sum(bl,'forecastYTD'), totA=bl.reduce((s,r)=>s+(r.actualYTD||0),0);
-  document.getElementById('bu-f').textContent=fm(totF);
-  document.getElementById('bu-a').textContent=fm(totA);
-  document.getElementById('bu-p').textContent=fp(totF>0?totA/totF:null)+' Achieved';
-  document.getElementById('bu-n').textContent=bl.length;
+  // filter rows ตาม BU ที่เลือก (Win only)
+  const rows=(cl.clientSummary||[]).filter(c=>c.buList&&c.buList.includes(selBU));
 
-  document.getElementById('bu-tbl').innerHTML=bl.map(r=>`
+  // สร้าง label BU → sheet name
+  const BU_SHEET = {Digital:'MID - Digital',Tech:'MID - Tech',Consult:'MID - Consult',Event:'MID - Event / Jom-Event'};
+  const sheetLabel = BU_SHEET[selBU]||selBU;
+
+  document.getElementById('bu-tbl-title').textContent='รายการลูกค้าใน BU: '+selBU;
+  document.getElementById('bu-meta').textContent='จาก '+sheetLabel+' (Win เท่านั้น)';
+  document.getElementById('bu-chart-title').textContent='Revenue รายเดือน — BU '+selBU;
+
+  const totBudget=sum(rows,'budget'), totGP=sum(rows,'gp'), totCount=sum(rows,'count');
+  document.getElementById('bu-f').textContent=fm(totBudget);
+  document.getElementById('bu-a').textContent=fm(totGP);
+  document.getElementById('bu-p').textContent='% GP: '+fp(totBudget>0?totGP/totBudget:null);
+  document.getElementById('bu-n').textContent=totCount;
+
+  document.getElementById('bu-tbl').innerHTML=rows.length===0
+    ? '<tr><td colspan="7" style="text-align:center;color:var(--ink2);padding:24px;">ไม่พบข้อมูล</td></tr>'
+    : rows.map(c=>`
     <tr>
-      <td style="font-weight:600">${esc(r.client)}</td>
-      <td style="font-size:11px;color:var(--ink2)">${esc(shortTier(r.tier))}</td>
-      <td>${esc(r.ae||'—')}</td>
-      <td class="nr">${fm(r.forecastYTD)}</td>
-      <td class="nr">${r.actualYTD!=null?fm(r.actualYTD):'—'}</td>
-      <td>${badge(r.achieved)}</td>
+      <td style="font-weight:600">${esc(c.client)}${c.isNew?'<span class="tn">NEW</span>':'<span class="tr">Ret</span>'}</td>
+      <td style="font-size:12px">${c.isNew?'New':'Retention'}</td>
+      <td style="font-size:12px">${c.aeList.map(esc).join(', ')}</td>
+      <td class="nr">${fm(c.budget)}</td>
+      <td class="nr">${fm(c.gp)}</td>
+      <td class="nr">${fp(c.gpPct)}</td>
+      <td class="nr">${fn(c.count)}</td>
     </tr>`).join('');
 
-  const mF=MONTHS.map((_,mi)=>sum(bl.map(r=>({v:r.monthly[mi]?.forecast||0})),'v'));
-  const mA=MONTHS.map((_,mi)=>bl.reduce((s,r)=>{const v=r.monthly[mi]?.actual;return s+(v!=null?v:0);},0));
-  mkChart('bu-line',{type:'line',
-    data:{labels:MONTHS,datasets:[
-      {label:'Forecast',data:mF,borderColor:'#99AECE',borderDash:[5,4],tension:.3,pointRadius:3,fill:false},
-      {label:'Actual',data:mA,borderColor:'#0B1E3D',tension:.3,pointRadius:3,fill:false}
-    ]},
-    options:{maintainAspectRatio:false,
-      scales:{y:{ticks:{callback:v=>fm(v)}}},
+  // กราฟ revenue ต่อ client ใน BU นี้ (bar chart)
+  const top10=rows.slice(0,10);
+  mkChart('bu-line',{type:'bar',
+    data:{labels:top10.map(c=>c.client),
+      datasets:[
+        {label:'Revenue',data:top10.map(c=>c.budget),backgroundColor:'#0B1E3D',borderRadius:4},
+        {label:'GP',data:top10.map(c=>c.gp),backgroundColor:'#1B7A4F',borderRadius:4}
+      ]},
+    options:{maintainAspectRatio:false,indexAxis:'y',
+      scales:{x:{ticks:{callback:v=>fm(v)}}},
       plugins:{legend:{position:'top'},tooltip:{callbacks:{label:c=>c.dataset.label+': '+fm(c.raw)}}}}
   });
 }
@@ -539,20 +573,21 @@ function renderInd(){
 
 /* ─── VIEW 4: CLIENT ─── */
 function populateClFilters(){
-  const rows=(D.clients?.clientSummary)||[];
-  const aeSet={};
-  rows.forEach(r=>r.aeList.forEach(a=>{if(a)aeSet[a]=true;}));
+  // ดึง AE จาก allAEs ที่ Apps Script ส่งมา (ข้อมูลปัจจุบันจาก sheet จริง)
+  const allAEs=(D.clients?.allAEs)||[];
   const sel=document.getElementById('cl-ae');
   sel.innerHTML='<option value="all">AE ทุกคน</option>'+
-    Object.keys(aeSet).sort().map(a=>`<option value="${esc(a)}">${esc(a)}</option>`).join('');
+    allAEs.map(a=>`<option value="${esc(a)}">${esc(a)}</option>`).join('');
 }
 function renderClient(){
   const typeF=document.getElementById('cl-type').value;
-  const aeF=document.getElementById('cl-ae').value;
+  const aeF  =document.getElementById('cl-ae').value;
+  const buF  =document.getElementById('cl-bu').value;
   let list=(D.clients?.clientSummary)||[];
   if(typeF==='new') list=list.filter(c=>c.isNew);
   if(typeF==='ret') list=list.filter(c=>!c.isNew);
   if(aeF!=='all')   list=list.filter(c=>c.aeList.includes(aeF));
+  if(buF!=='all')   list=list.filter(c=>c.buList&&c.buList.includes(buF));
 
   const totB=sum(list,'budget'), totG=sum(list,'gp');
   document.getElementById('cl-rev').textContent=fm(totB);
